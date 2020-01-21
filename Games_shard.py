@@ -484,8 +484,7 @@ def level_2():
                     best_move = [x, y]
                     best_score = score
             self.computer_turn = False
-            if 0 in self.board_score(game.board) or self.linear(self.board).count(' ') +\
-                    self.linear(self.board).count('!') == 0:
+            if game.game_end():
                 return False
             if best_move is False:
                 return True
@@ -515,6 +514,11 @@ def level_2():
             cell = self.get_cell(mouse_pos)
             self.on_click(cell)
 
+        @staticmethod
+        def game_end():
+            return (0 in game.board_score(game.board)) or (game.linear(game.board).count(' ')
+                                                           + game.linear(game.board).count('!') == 0)
+
     # в Отелло играют на поле 8 * 8 поэтому требуется поле кратное 800 по высоте и ширине.
     new_size = 801, 801
     new_screen = pygame.display.set_mode(new_size)
@@ -530,12 +534,14 @@ def level_2():
                 terminate()
             if e.type == pygame.MOUSEBUTTONDOWN:
                 if not game.computer_turn:
-                    if 0 in game.board_score(game.board) or game.linear(game.board).count(' ')\
-                            + game.linear(game.board).count('!') == 0:
+                    if game.game_end():
                         # если у игрока и компьютера нет возможных ходов, выходим из цикла
                         working = False
                         break
                     game.get_click(e.pos)
+        if game.game_end():
+            # если у игрока и компьютера нет возможных ходов, выходим из цикла
+            break
         new_screen.fill((6, 139, 54))
         computer_board = game.copy_board()
         game.board = game.hints_board()
